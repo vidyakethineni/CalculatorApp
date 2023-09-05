@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             R.id.buttonAdd to '+'
         )
 
+        // Click listener to insert respective operand
         operatorButtons.forEach { (buttonId, operator) ->
             val button = findViewById<Button>(buttonId)
             button.setOnClickListener {
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Click listener to insert decimal
         val buttonDecimal = findViewById<Button>(R.id.buttonDecimal)
         buttonDecimal.setOnClickListener {
             if (!currentNumber.contains(".")) {
@@ -56,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Click listener to evaluate expressions
         val buttonEquals = findViewById<Button>(R.id.buttonEquals)
         buttonEquals.setOnClickListener {
             if (currentNumber.isNotEmpty() && previousNumber.isNotEmpty() && currentOperation != null) {
@@ -64,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Click listener to clear text view
         val buttonClear = findViewById<Button>(R.id.buttonClear)
         buttonClear.setOnClickListener {
             currentNumber = ""
@@ -72,6 +76,7 @@ class MainActivity : AppCompatActivity() {
             updateTextView()
         }
 
+        // Click listener to change number from positive to negative, or negative to positive
         val buttonArithmetic = findViewById<Button>(R.id.buttonArithmetic)
         buttonArithmetic.setOnClickListener {
             if (currentNumber.isNotEmpty()) {
@@ -84,13 +89,33 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Click listener to find the decimal value of a number
+        val buttonPercentage = findViewById<Button>(R.id.buttonPercentage)
+        buttonPercentage.setOnClickListener {
+            if (currentNumber.isNotEmpty()) {
+                val number = currentNumber.toDouble()
+                val percentage = number / 100.0
+                currentNumber = percentage.toString()
+                updateTextView()
+            }
+        }
+
     }
 
+    // Helper function for updating text view
     private fun updateTextView(text: String? = null) {
         val displayText = text ?: if (currentNumber.isNotEmpty()) currentNumber else "0"
-        textView!!.text = displayText
+
+        // Format the number based on whether it's a whole number or not
+        val isWholeNumber = currentNumber.toDouble() % 1 == 0.0
+        textView!!.text = if (isWholeNumber) {
+            displayText.toInt().toString()
+        } else {
+            displayText
+        }
     }
 
+    // Helper function for evaluating expressions
     private fun performCalculation() {
         val num1 = previousNumber.toDouble()
         val num2 = currentNumber.toDouble()
