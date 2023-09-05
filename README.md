@@ -8,8 +8,9 @@ The following **required** functionality is completed:
 
 * User sees a friendly interface resembling the default iPhone calculator.
 * User can perform basic arithmetic operations (addition, subtraction, multiplication, and division) using the calculator's digit and operand buttons.
-* User can enter a number (which is displayed on the top textview) and can click an operator followed by another number, which will result in the evaluation of the expression (for which the answer is returned in the top textview)
-
+* User can enter a number (which is displayed on the top textview) and can click an operator followed by another number, which will result in the evaluation of the expression (for which the answer is returned in the top textview).
+* Users have the option to use the '+/-' button to toggle the sign of numbers, making them either positive or negative.
+* Users can utilize the '%' button to transform a number into its decimal representation.
 
 ## Extensions
 
@@ -26,7 +27,7 @@ GIF created with [EzGif](https://ezgif.com/).
 
 ## Notes
 
-* The functionality of the % button which returns the decimal value was coded, but is not returning the expected output in the top textview.
+* Challenges encountered during the coding process included addressing calculation issues when handling one operand before proceeding to the next input, along with issues related to the Android Studio Emulator frequently crashing.
 
 ## License
 
