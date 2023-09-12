@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.isDigitsOnly
 
 /**
  * MainActivity for the calculator application that replicates the functionality of the default iPhone calculator .
@@ -11,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     private lateinit var textView: TextView
     private var currentNumber = StringBuilder()
-    private var previousNumber = ""
     private var currentOperation: Char? = null
+    private var expression = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +31,16 @@ class MainActivity : AppCompatActivity() {
             val buttonId = resources.getIdentifier("button$i", "id", packageName)
             val button = findViewById<Button>(buttonId)
             button.setOnClickListener { v ->
-                currentNumber.append((v as Button).text)
+                val digit = (v as Button).text.toString()
+                if (expression.isNotEmpty() && expression.last().isDigitsOnly()) {
+                    // Concatenate the digit to the last number
+                    expression[expression.size-1] += digit
+                    currentNumber.append(digit)
+                } else {
+                    // Add it as a new number
+                    expression.add(digit)
+                    currentNumber.append(digit)
+                }
                 updateTextView()
             }
         }
@@ -52,15 +62,9 @@ class MainActivity : AppCompatActivity() {
         operatorButtons.forEach { (buttonId, operator) ->
             val button = findViewById<Button>(buttonId)
             button.setOnClickListener {
-                if (currentNumber.isNotEmpty()) {
-                    if (currentOperation != null) {
-                        performCalculation()
-                    }
-                    previousNumber = currentNumber.toString()
-                    currentNumber.setLength(0)
-                    currentOperation = operator
-                    updateTextView()
-                }
+                currentOperation = operator
+                expression.add(operator.toString())
+                currentNumber.setLength(0)
             }
         }
 
@@ -70,22 +74,75 @@ class MainActivity : AppCompatActivity() {
         val buttonDecimal = findViewById<Button>(R.id.buttonDecimal)
         buttonDecimal.setOnClickListener {
             if (!currentNumber.contains(".")) {
+                expression.add(".")
                 currentNumber.append(".")
                 updateTextView()
             }
         }
 
         /**
-         * Click listener for equal sign, which calls the performCalculation() helper function to calculate and output expressions
+         * Click listener for equal sign, performs PEMDAS to calculate and output expressions
          */
         val buttonEquals = findViewById<Button>(R.id.buttonEquals)
         buttonEquals.setOnClickListener {
-            if (currentNumber.isNotEmpty() && previousNumber.isNotEmpty() && currentOperation != null) {
-                performCalculation()
-                currentOperation = null
-                previousNumber = "" // Clear the previousNumber after calculation
+            //First completing multiplication expressions
+            var i = 0
+            while (i < expression.size) {
+                if (expression[i] == "*") {
+                    val answer = expression[i - 1].toDouble() * expression[i + 1].toDouble()
+                    expression[i - 1] = answer.toString()
+                    expression.removeAt(i)
+                    expression.removeAt(i)
+                } else {
+                    i++
+                }
             }
+            //Second completing division expressions
+            i = 0
+            while (i < expression.size) {
+                if (expression[i] == "/") {
+                    val denominator = expression[i + 1].toDouble()
+                    if (denominator == 0.0) {
+                        // Handle division by zero error here if needed
+                        textView.text = "Error"
+                        return@setOnClickListener
+                    }
+                    val answer = expression[i - 1].toDouble() / denominator
+                    expression[i - 1] = answer.toString()
+                    expression.removeAt(i)
+                    expression.removeAt(i)
+                } else {
+                    i++
+                }
+            }
+            //Third completing addition expressions
+            i = 0
+            while (i < expression.size) {
+                if (expression[i] == "+") {
+                    val answer = expression[i - 1].toDouble() + expression[i + 1].toDouble()
+                    expression[i - 1] = answer.toString()
+                    expression.removeAt(i)
+                    expression.removeAt(i)
+                } else {
+                    i++
+                }
+            }
+            //Fourth completing addition expressions
+            i = 0
+            while (i < expression.size) {
+                if (expression[i] == "-") {
+                    val answer = expression[i - 1].toDouble() - expression[i + 1].toDouble()
+                    expression[i - 1] = answer.toString()
+                    expression.removeAt(i)
+                    expression.removeAt(i)
+                } else {
+                    i++
+                }
+            }
+            currentNumber = StringBuilder(expression[0])
+            updateTextView()
         }
+
 
         /**
          * Click listener to clear and reset text view to 0
@@ -101,11 +158,15 @@ class MainActivity : AppCompatActivity() {
         val buttonArithmetic = findViewById<Button>(R.id.buttonArithmetic)
         buttonArithmetic.setOnClickListener {
             if (currentNumber.isNotEmpty()) {
-                if (currentNumber[0] == '-') {
-                    currentNumber.deleteCharAt(0)
+                // Toggle the sign of the current number
+                val firstChar = currentNumber[0]
+                if (firstChar == '-') {
+                    currentNumber.deleteCharAt(0) // Remove the minus sign
                 } else {
-                    currentNumber.insert(0, "-")
+                    currentNumber.insert(0, '-') // Add a minus sign at the beginning
                 }
+                val lastIndex = expression.lastIndex
+                expression[lastIndex] = currentNumber.toString()
                 updateTextView()
             }
         }
@@ -120,6 +181,8 @@ class MainActivity : AppCompatActivity() {
                 val percentage = number / 100.0
                 currentNumber.setLength(0)
                 currentNumber.append(percentage.toString())
+                expression.removeAt(expression.size - 1)
+                expression.add(percentage.toString())
                 updateTextView()
             }
         }
@@ -129,7 +192,7 @@ class MainActivity : AppCompatActivity() {
      * Helper function for updating text view
      */
     private fun updateTextView() {
-        val displayText = if (currentNumber.isNotEmpty()) currentNumber.toString() else if (previousNumber.isNotEmpty()) previousNumber else "0"
+        val displayText = if (currentNumber.isNotEmpty()) currentNumber.toString() else "0"
         val formattedText = when {
             displayText.endsWith(".0") -> displayText.substring(0, displayText.length - 2)
             else -> displayText
@@ -139,35 +202,11 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Helper function for evaluating expressions based on the operator, and handles division by zero
-     */
-    private fun performCalculation() {
-        val num1 = previousNumber.toDoubleOrNull() ?: return
-        val num2 = currentNumber.toString().toDoubleOrNull() ?: return
-
-        when (currentOperation) {
-            '+' -> currentNumber = StringBuilder((num1 + num2).toString())
-            '-' -> currentNumber = StringBuilder((num1 - num2).toString())
-            '*' -> currentNumber = StringBuilder((num1 * num2).toString())
-            '/' -> {
-                if (num2 != 0.0) {
-                    currentNumber = StringBuilder((num1 / num2).toString())
-                } else {
-                    currentNumber = StringBuilder("Error")
-                }
-            }
-            else -> return
-        }
-        updateTextView()
-    }
-
-    /**
      * Helper function to clear the calculator
      */
     private fun clearCalculator() {
         currentNumber.setLength(0)
-        previousNumber = ""
-        currentOperation = null
+        expression.clear()
         updateTextView()
     }
 }
