@@ -1,33 +1,31 @@
-# Project 1 
+# Project 2
 
-Project 1 includes a calculator application that mirrors the default iPhone calculator with its standard digit and operand buttons and corresponding functionality.
+Project 2 extends on the Project 1 calculator application that mirrors the default iPhone calculator, but with additional functionality for an app icon, changes in device orientation, and logging button clicks using LogCat. 
 
 ## Functionality 
 
-The following **required** functionality is completed:
+In addition to the required functionality from Project 1, the following features and enhancements have been implemented:
 
-* User sees a friendly interface resembling the default iPhone calculator.
-* User can perform basic arithmetic operations (addition, subtraction, multiplication, and division) using the calculator's digit and operand buttons.
-* User can enter a number (which is displayed on the top textview) and can click an operator followed by another number, which will result in the evaluation of the expression (for which the answer is returned in the top textview).
-* Users have the option to use the '+/-' button to toggle the sign of numbers, making them either positive or negative.
-* Users can utilize the '%' button to transform a number into its decimal representation.
+* Orientation Persistence: The Project 1 calculator now maintains user inputs even when the orientation changes. This is achieved by overriding certain lifecycle methods to correctly save and restore the state of the calculator.
+* Logging: The app includes comprehensive logging using LogCat. Every button click is logged, providing valuable information for debugging and monitoring user interactions.
+* App Icon: The app features a calculator icon illustrated by Fikri Azhari and published on Vecteezy, improving its visual appeal and brand identity.
+* Landscape Mode Layout: In landscape mode, the calculator layout is optimized with additional buttons, including trignometric and logarithmic functions such as sin, cos, tan, Log 10 and ln.
 
 ## Extensions
 
-* The original functionality of the calculator was not modified.
-* Potential extensions include, horizontal layout with scientific calculator functionality.
+* Potential extensions include the color-coding of buttons and inclusion of additional buttons to match the landscape layout of the iPhone calculator.
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='Project1 Video Walkthrough.gif' title='Project1 Video Walkthrough' width='50%' alt='Project1 Video Walkthrough' />
+<img src='Project1 Video Walkthrough.gif' title='Project2 Video Walkthrough' width='50%' alt='Project2 Video Walkthrough' />
 
 GIF created with [EzGif](https://ezgif.com/).
 
 ## Notes
 
-* Challenges encountered during the coding process included addressing calculation issues when handling one operand before proceeding to the next input, along with issues related to the Android Studio Emulator frequently crashing.
+* Challenges encountered during the coding process included overriding lifecycle methods to restore calculator history on orientation change.
 
 ## License
 
