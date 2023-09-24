@@ -19,7 +19,7 @@ In addition to the required functionality from Project 1, the following features
 
 Here's a walkthrough of implemented user stories:
 
-<img src='Project1 Video Walkthrough.gif' title='Project2 Video Walkthrough' width='50%' alt='Project2 Video Walkthrough' />
+<img src='Project2 Video Walkthrough.gif' title='Project2 Video Walkthrough' width='50%' alt='Project2 Video Walkthrough' />
 
 GIF created with [EzGif](https://ezgif.com/).
 
