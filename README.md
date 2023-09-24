@@ -27,7 +27,7 @@ GIF created with [EzGif](https://ezgif.com/).
 
 ## Notes
 
-* Challenges encountered during the coding process included addressing calculation issues when handling one operand before proceeding to the next input, along with issues related to the Android Studio Emulator frequently crashing.
+* Challenges encountered during the coding process included addressing calculations as per PEMDAS as well as issues related to the Android Studio Emulator frequently crashing.
 
 ## License
 
